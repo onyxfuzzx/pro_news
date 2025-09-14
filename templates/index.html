@@ -107,7 +107,7 @@
             <input type="url" name="url" placeholder="Enter news article URL here..." required>
             <button type="submit">Summarize</button>
         </form>
-
+         <p>{{summary}}</p>
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 {% for message in messages %}

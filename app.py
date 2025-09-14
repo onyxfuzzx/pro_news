@@ -1,76 +1,100 @@
 from flask import Flask, request, render_template, flash, redirect, url_for
-import nltk
-from textblob import TextBlob
-from newspaper import Article, Config
 from datetime import datetime
-from urllib.parse import urlparse
-import validators
+import requests
+from bs4 import BeautifulSoup
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain.prompts import PromptTemplate
+from dotenv import load_dotenv
 
-nltk.download('punkt')
+load_dotenv()
+
 
 app = Flask(__name__)
 app.secret_key = 'your_super_secret_key'
 
-def get_website_name(url):
-    parsed_url = urlparse(url)
-    domain = parsed_url.netloc
-    if domain.startswith("www."):
-        domain = domain[4:]
-    return domain
+
+llm =ChatGoogleGenerativeAI(model="gemini-2.0-flash")
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    summary = None    
+
     if request.method == 'POST':
-        url = request.form['url']
+        url = request.form['url'].strip()
 
-        if not validators.url(url):
-            flash('Please enter a structurally valid URL.')
-            return redirect(url_for('index'))
         
+        if not url:
+            return render_template('index.html', summary="Please enter a URL.")
+        elif not url.startswith("http://") and not url.startswith("https://"):
+            return render_template('index.html', summary="Invalid URL. Must start with http:// or https://")
+        elif len(url) < 10:
+            return render_template('index.html', summary="Invalid URL. Too short.")
+
         try:
-            config = Config()
-            config.browser_user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            config.request_timeout = 10
+           
+            response = requests.get(url, timeout=10)
+            soup = BeautifulSoup(response.text, "html.parser")
 
-            article = Article(url, config=config)
             
-            article.download()
-            article.parse()
+            paragraphs = soup.find_all("p")
+            text = " ".join([p.get_text() for p in paragraphs])
+
             
-            title = article.title
-            authors = ', '.join(article.authors)
-            publish_date = article.publish_date.strftime('%B %d, %Y') if article.publish_date else "N/A"
-            top_image = article.top_image
+            author = "Unknown"
 
-            if not authors:
-                authors = get_website_name(url)
-
-            article_text = article.text
-            sentences = article_text.split('.')
-            max_summarized_sentences = 5
-            summary = '.'.join(sentences[:max_summarized_sentences]) + '.'
             
-            if len(summary) <= 1 or not article_text:
-                flash('Could not summarize this article. The content may be blocked or in an unreadable format.')
-                return redirect(url_for('index'))
+            meta_author = soup.find("meta", attrs={"name": "author"})
+            if meta_author and meta_author.get("content"):
+                author = meta_author["content"]
 
-            analysis = TextBlob(article.text)
-            polarity = analysis.sentiment.polarity
-
-            if polarity > 0.1:
-                sentiment = 'Positive 😊'
-            elif polarity < -0.1:
-                sentiment = 'Negative 😟'
-            else:
-                sentiment = 'Neutral 😐'
             
-            return render_template('index.html', title=title, authors=authors, publish_date=publish_date, summary=summary, top_image=top_image, sentiment=sentiment, url=url)
+            if author == "Unknown":
+                author_tag = soup.find(["span", "div"], class_=lambda x: x and "author" in x.lower())
+                if author_tag:
+                    author = author_tag.get_text().strip()
 
-        except Exception as e:
-            flash(f'Failed to process the article. The website may be blocking automated scrapers. (Error: {e})')
-            return redirect(url_for('index'))
+             
+            if author == "Unknown":
+                for p in paragraphs[:5]:   
+                    text_p = p.get_text()
+                    if text_p.lower().startswith("by "):
+                        author = text_p[3:].strip()
+                        break
 
-    return render_template('index.html')
+            
+            prompt = PromptTemplate.from_template(
+                """
+You are a smart news summarizer. 
+The user provides text extracted from a webpage.
+
+Rules:
+- First, check if the content looks like a news article (events, dates, places, people, etc.).
+- If it is NOT news, reply: "Not a valid news article."
+- You do NOT need to visit the URL yourself. Use only the text provided.
+- If it IS news:
+    - Summarize it in clear bullet points (5–10 points, depending on article length).
+    - Each point should cover one key fact or event.
+    - Keep the summary simple, factual, and easy to read.
+    - At the end, include:
+        - Source: {url}
+        - Author: {author}
+
+Here is the article text:
+
+{text}
+
+Now, generate the response:
+"""
+            )
+
+            chain = prompt | llm
+            summary = chain.invoke({"text": text[:5000], "url": url, "author": author}).content   
+
+        except requests.exceptions.RequestException:
+            summary = "Error: Could not fetch the webpage. Please check the URL."
+
+    return render_template('index.html', summary=summary)
 
 
 if __name__ == '__main__':
