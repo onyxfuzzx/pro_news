@@ -61,6 +61,28 @@
             text-align: center;
             margin-bottom: 20px;
         }
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .error-message h3 {
+            color: #721c24;
+            margin-top: 0;
+            font-size: 20px;
+        }
+        .error-message p {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        .error-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
         .results {
             border-top: 1px solid #eee;
             padding-top: 20px;
@@ -107,7 +129,6 @@
             <input type="url" name="url" placeholder="Enter news article URL here..." required>
             <button type="submit">Summarize</button>
         </form>
-         <p>{{summary}}</p>
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 {% for message in messages %}
@@ -116,7 +137,21 @@
             {% endif %}
         {% endwith %}
 
-        {% if title %}
+        {% if summary and summary == "Not a valid news article." %}
+        <div class="error-message">
+            <div class="error-icon">❌</div>
+            <h3>Invalid News Article</h3>
+            <p><strong>We couldn't process this URL as a valid news article.</strong></p>
+            <p>This could be because:</p>
+            <ul style="text-align: left; display: inline-block;">
+                <li>The URL doesn't contain a news article</li>
+                <li>The content is not accessible or behind a paywall</li>
+                <li>The page structure is not compatible with our summarizer</li>
+                <li>The URL is broken or no longer available</li>
+            </ul>
+            <p><strong>Please try with a different news article URL.</strong></p>
+        </div>
+        {% elif title %}
         <div class="results">
             <h2>{{ title }}</h2>
             <div class="metadata">
