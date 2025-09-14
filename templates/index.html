@@ -3,132 +3,435 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI News Summarizer 🤫🧏‍♂️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>AI News Summarizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Crimson+Text:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
+        * {
             margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container {
-            width: 100%;
-            max-width: 800px;
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        
+        body {
+            font-family: 'Crimson Text', serif;
+            background: #ffffff;
+            color: #1a1a1a;
+            line-height: 1.6;
+            min-height: 100vh;
         }
-        h1 {
+        
+        .newspaper-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #ffffff;
+        }
+        
+        /* Clean masthead */
+        .masthead {
             text-align: center;
-            color: #2c3e50;
-            margin-bottom: 20px;
+            padding-bottom: 30px;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #000;
         }
-        form {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-        input[type="url"] {
-            flex-grow: 1;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        button {
-            padding: 12px 20px;
-            border: none;
-            background-color: #3498db;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        .flash-message {
-            background-color: #e74c3c;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .error-message {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .error-message h3 {
-            color: #721c24;
-            margin-top: 0;
-            font-size: 20px;
-        }
-        .error-message p {
+        
+        .newspaper-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #000;
             margin-bottom: 10px;
-            line-height: 1.5;
+            letter-spacing: 2px;
         }
-        .error-icon {
-            font-size: 48px;
+        
+        .tagline {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: #666;
+            font-style: italic;
             margin-bottom: 15px;
         }
-        .results {
-            border-top: 1px solid #eee;
-            padding-top: 20px;
+        
+        .date-line {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: #000;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .results h2 {
-            font-size: 24px;
-            color: #34495e;
+        
+        /* Simple search section */
+        .article-search {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: 40px;
+            margin-bottom: 50px;
+            text-align: center;
         }
-        .results img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            margin-bottom: 20px;
+        
+        .search-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: #000;
+            margin-bottom: 10px;
+            font-weight: 700;
         }
-        .metadata {
+        
+        .search-subtitle {
+            font-family: 'Inter', sans-serif;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+        
+        .search-form {
             display: flex;
-            justify-content: space-between;
-            color: #7f8c8d;
+            gap: 0;
+            max-width: 600px;
+            margin: 0 auto;
+            border: 2px solid #000;
+        }
+        
+        .url-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            background: #fff;
+            color: #000;
+            outline: none;
+        }
+        
+        .url-input:focus {
+            background: #f9f9f9;
+        }
+        
+        .analyze-btn {
+            padding: 15px 30px;
+            background: #000;
+            color: #fff;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .analyze-btn:hover {
+            background: #333;
+        }
+        
+        /* Flash messages */
+        .flash-message {
+            background: #000;
+            color: #fff;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Error styling */
+        .error-banner {
+            border: 2px solid #000;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .error-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: #000;
             margin-bottom: 20px;
-            font-size: 14px;
+            font-weight: 700;
+        }
+        
+        .error-description {
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+        
+        /* Article layout */
+        .article-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 50px;
+        }
+        
+        .main-article {
+            border-right: 1px solid #ddd;
+            padding-right: 30px;
+        }
+        
+        .article-header {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #000;
+        }
+        
+        .article-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #000;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+        
+        .article-meta {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: #666;
+            display: flex;
+            gap: 20px;
             flex-wrap: wrap;
         }
-        .summary-box {
-            background: #ecf0f1;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            line-height: 1.6;
+        
+        .meta-item {
+            font-weight: 400;
         }
-        .sentiment {
-            font-size: 18px;
-            font-weight: bold;
+        
+        .meta-label {
+            font-weight: 600;
+            color: #000;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .article-image {
+            width: 100%;
+            height: auto;
+            margin: 20px 0;
+            border: 1px solid #ddd;
+        }
+        
+        /* Summary styling */
+        .summary-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: #000;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #000;
+            padding-bottom: 5px;
+        }
+        
+        .summary-content {
+            background: #f9f9f9;
+            padding: 30px;
+            border-left: 3px solid #000;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #222;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            padding-top: 0;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+        }
+        
+        .sidebar-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: #fff;
+            background: #000;
+            padding: 12px 20px;
+            margin: 0;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .sidebar-content {
+            padding: 20px;
+            background: #fff;
+        }
+        
+        /* Sentiment analysis */
+        .sentiment-card {
             text-align: center;
+            font-family: 'Inter', sans-serif;
+            padding: 20px;
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+        }
+        
+        .sentiment-label {
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .sentiment-value {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #000;
+        }
+        
+        /* Authenticity meter */
+        .authenticity-card {
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            padding: 20px;
+            border: 2px solid #000;
+        }
+        
+        .authenticity-high {
+            background: #f8f8f8;
+            color: #000;
+        }
+        
+        .authenticity-medium {
+            background: #f0f0f0;
+            color: #000;
+        }
+        
+        .authenticity-low {
+            background: #000;
+            color: #fff;
+        }
+        
+        .authenticity-label {
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.8;
+        }
+        
+        .authenticity-value {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        /* Related articles */
+        .related-articles {
+            list-style: none;
+        }
+        
+        .related-article {
+            margin-bottom: 12px;
             padding: 15px;
-            border-radius: 5px;
-            background-color: #bdc3c7;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+        
+        .related-article:hover {
+            background: #f8f8f8;
+        }
+        
+        .related-link {
+            text-decoration: none;
+            color: #000;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: block;
+        }
+        
+        .related-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* AI branding */
+        .ai-branding {
+            background: #000;
+            color: #fff;
+            padding: 25px;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .ai-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .ai-description {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .newspaper-title {
+                font-size: 2.5rem;
+            }
+            
+            .article-layout {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .main-article {
+                border-right: none;
+                padding-right: 0;
+            }
+            
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .article-title {
+                font-size: 2rem;
+            }
+            
+            .newspaper-container {
+                padding: 30px 15px;
+            }
+            
+            .article-search {
+                padding: 30px 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>AI News Summarizer 🤫🧏‍♂️</h1>
-        <form action="/" method="POST">
-            <input type="url" name="url" placeholder="Enter news article URL here..." required>
-            <button type="submit">Summarize</button>
-        </form>
+    <div class="newspaper-container">
+        <!-- Clean Masthead -->
+        <header class="masthead">
+            <h1 class="newspaper-title">THE AI CHRONICLE</h1>
+            <p class="tagline">Intelligent News Analysis & Verification</p>
+            <div class="date-line" id="currentDate"></div>
+        </header>
+        
+        <!-- Simple Search Section -->
+        <section class="article-search">
+            <h2 class="search-title">Article Analysis</h2>
+            <p class="search-subtitle">Enter a news URL for AI-powered summary and verification</p>
+            <form class="search-form" action="/" method="POST">
+                <input type="url" name="url" class="url-input" placeholder="Enter news article URL..." required>
+                <button type="submit" class="analyze-btn">Analyze</button>
+            </form>
+        </section>
+        
+        <!-- Flash Messages -->
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 {% for message in messages %}
@@ -136,41 +439,104 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-
+        
+        <!-- Error State -->
         {% if summary and summary == "Not a valid news article." %}
-        <div class="error-message">
-            <div class="error-icon">❌</div>
-            <h3>Invalid News Article</h3>
-            <p><strong>We couldn't process this URL as a valid news article.</strong></p>
-            <p>This could be because:</p>
-            <ul style="text-align: left; display: inline-block;">
-                <li>The URL doesn't contain a news article</li>
-                <li>The content is not accessible or behind a paywall</li>
-                <li>The page structure is not compatible with our summarizer</li>
-                <li>The URL is broken or no longer available</li>
-            </ul>
-            <p><strong>Please try with a different news article URL.</strong></p>
+        <div class="error-banner">
+            <h2 class="error-title">Article Not Accessible</h2>
+            <p class="error-description">Unable to process the provided URL. Please verify the URL and try again with a valid news article.</p>
         </div>
+        
+        <!-- Article Content -->
         {% elif title %}
-        <div class="results">
-            <h2>{{ title }}</h2>
-            <div class="metadata">
-                <span><strong>By:</strong> {{ authors }}</span>
-                <span><strong>Published:</strong> {{ publish_date }}</span>
-            </div>
-            {% if top_image %}
-                <img src="{{ top_image }}" alt="Article Image">
-            {% endif %}
-            <h3>Summary</h3>
-            <div class="summary-box">
-                <p>{{ summary }}</p>
-            </div>
-            <h3>Sentiment Analysis</h3>
-            <div class="sentiment">
-                Overall Sentiment: {{ sentiment }}
-            </div>
+        <div class="article-layout">
+            <main class="main-article">
+                <article class="article-header">
+                    <h1 class="article-title">{{ title }}</h1>
+                    <div class="article-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Author:</span> {{ authors or 'Staff Reporter' }}
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Published:</span> {{ publish_date or 'Date unavailable' }}
+                        </div>
+                    </div>
+                    {% if top_image %}
+                        <img src="{{ top_image }}" alt="Article image" class="article-image">
+                    {% endif %}
+                </article>
+                
+                <section class="summary-section">
+                    <h2 class="section-title">Summary</h2>
+                    <div class="summary-content">
+                        {{ summary }}
+                    </div>
+                </section>
+            </main>
+            
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Sentiment</h3>
+                    <div class="sidebar-content">
+                        <div class="sentiment-card">
+                            <div class="sentiment-label">Tone</div>
+                            <div class="sentiment-value">{{ sentiment }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if authenticity %}
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Verification</h3>
+                    <div class="sidebar-content">
+                        <div class="authenticity-card {% if authenticity == 'High' %}authenticity-high{% elif authenticity == 'Medium' %}authenticity-medium{% else %}authenticity-low{% endif %}">
+                            <div class="authenticity-label">Authenticity</div>
+                            <div class="authenticity-value">{{ authenticity }}</div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if related_articles %}
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Related</h3>
+                    <div class="sidebar-content">
+                        <ul class="related-articles">
+                            {% for link in related_articles %}
+                                <li class="related-article">
+                                    <a href="{{ link.url }}" target="_blank" class="related-link">
+                                        {{ link.source }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="sidebar-section">
+                    <div class="ai-branding">
+                        <div class="ai-title">AI Analysis</div>
+                        <div class="ai-description">Powered by advanced machine learning for comprehensive news verification and insights.</div>
+                    </div>
+                </div>
+            </aside>
         </div>
         {% endif %}
     </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateElement = document.getElementById('currentDate');
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            dateElement.textContent = now.toLocaleDateString('en-US', options).toUpperCase();
+        });
+    </script>
 </body>
 </html>
