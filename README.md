@@ -22,7 +22,12 @@ An intelligent Flask web app that analyzes news articles using AI. Paste any art
 
 ## Screenshots
 
+<img width="1919" height="955" alt="image" src="https://github.com/user-attachments/assets/80cec5fa-aaa5-46fe-9ab6-699067d4fad4" />
+
 > Paste a URL → click **Analyze** → get instant AI-powered insights.
+
+<img width="1919" height="956" alt="image" src="https://github.com/user-attachments/assets/feaf9954-a884-4409-a94d-aefdf7733101" />
+
 
 ## Tech Stack
 
