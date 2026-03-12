@@ -1,0 +1,70 @@
+# ── Environment ──────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Python ───────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+dist/
+build/
+eggs/
+sdist/
+wheels/
+*.whl
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ── Virtual environments ────────────────────────────────
+venv/
+env/
+.venv/
+ENV/
+
+# ── IDE / Editors ───────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*.skel
+*~
+*.sublime-project
+*.sublime-workspace
+
+# ── OS generated ────────────────────────────────────────
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# ── Testing / Coverage ─────────────────────────────────
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+
+# ── Logs ────────────────────────────────────────────────
+*.log
+
+# ── Misc ────────────────────────────────────────────────
+*.bak
+*.tmp
+*.temp
